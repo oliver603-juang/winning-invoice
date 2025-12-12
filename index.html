@@ -141,11 +141,13 @@
             </div>
             
             <div class="grid grid-cols-2 gap-3 mb-6">
+                <!-- Camera Button: Removed 'multiple' to force direct camera launch on mobile -->
                 <label class="bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-xl p-4 flex flex-col items-center cursor-pointer transition group">
                     <i class="fas fa-camera text-2xl mb-2 text-[#FFCB77] group-hover:scale-110 transition"></i>
-                    <span class="text-xs text-slate-400">拍照 (多張)</span>
-                    <input type="file" accept="image/*" capture="environment" multiple class="hidden" onchange="handleAIUpload(this)">
+                    <span class="text-xs text-slate-400">拍照 (單張)</span>
+                    <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handleAIUpload(this)">
                 </label>
+                <!-- Gallery Button: Kept 'multiple' for selecting many files -->
                 <label class="bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-xl p-4 flex flex-col items-center cursor-pointer transition group">
                     <i class="fas fa-images text-2xl mb-2 text-[#4ECDC4] group-hover:scale-110 transition"></i>
                     <span class="text-xs text-slate-400">相簿 (多張)</span>
@@ -361,13 +363,13 @@
             }
         }
 
-        // --- 4. UI Rendering (FIXED: Uses string injection for empty state) ---
+        // --- 4. UI Rendering (Fixed Empty State Crash) ---
         function renderGallery() {
             const grid = document.getElementById('invoice-grid');
             document.getElementById('invoice-count').innerText = invoices.length;
 
             if (invoices.length === 0) {
-                // Fixed: Inject Empty State HTML string directly
+                // FIXED: Use innerHTML string for empty state to prevent appendChild errors
                 grid.innerHTML = `
                     <div class="col-span-2 text-center text-slate-600 py-12 flex flex-col items-center" id="empty-state">
                         <div class="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center mb-4">
@@ -513,7 +515,9 @@
             
             // List of models to try in order.
             const candidateModels = [
-                "gemini-2.5-flash-preview-09-2025"
+                "gemini-2.5-flash-preview-09-2025",
+                "gemini-1.5-flash",
+                "gemini-1.5-pro"
             ];
             
             let lastError = null;
